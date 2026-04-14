@@ -1,1 +1,8 @@
-# 2221
+# Week7
+
+7주차 완전 정리: AI 에이전트와 MCP로 한계 넘기1. 서브에이전트란?에이전트(Agent)는 "대리인"이라는 뜻으로, 사람이 직접 지시하지 않아도 목표와 규칙에 따라 스스로 판단하고 작업을 수행하는 AI 프로그램이다.커스텀 명령어와 자주 혼동하는데, 차이가 중요하다.구분커스텀 명령어서브에이전트성격정해진 규칙대로 실행상황 판단 후 유연하게 대응비유레시피대로 따라하는 요리사재료 보고 창의적으로 요리하는 셰프적합한 작업반복적·정형화된 작업복잡한 판단이 필요한 작업저장 형식.md 파일.md 파일 (.claude/agents/ 폴더)모델 선택메인 세션 모델 공유독립적으로 모델 선택 가능2. 서브에이전트 생성 절차/agents → Create new agent → Project(.claude/agents/)
+→ Generate with Claude → 프롬프트 입력
+→ 도구 권한 설정 → 모델 선택 → 배경색 설정이번 주에 만드는 3가지 에이전트:에이전트역할권한모델배경색code-bug-analyzer코드 리뷰 & 버그 분석Read-onlyOpusBlueperformance-optimizer성능 최적화All toolsInheritGreenux-design-advisorUX 디자인 개선All toolsInheritOrange
+코드 리뷰어가 Read-only인 이유 — 코드를 읽고 분석만 해야지 직접 수정하면 안 되기 때문. 분석 전문 에이전트는 읽기 전용이 안전하다.
+3. 서브에이전트 협업 방식3개 에이전트를 동시에 활용할 때 클로드 코드가 작업 성격에 따라 처리 방식을 자동 선택한다.처리 방식설명적합한 경우직렬 처리순서대로 하나씩 실행앞 작업 결과가 뒤 작업에 필요할 때병렬 처리여러 작업을 동시에 실행작업 간 의존성이 없을 때예: 코드 리뷰 3개를 동시에 요청하면 병렬, 리뷰 후 수정은 직렬로 진행됨.코드 대량 수정 전에는 반드시 백업 먼저:
+현재 상태를 백업해 줘→ backup 폴더 자동 생성 후 현재 파일 상태 복사.4. AI 개발팀 구축 (5개 에이전트)실제 소프트웨어 개발팀 역할을 그대로 에이전트로 재현한다. 모두 Sonnet 모델 + All tools 권한.에이전트역할배경색product-manager-prd제품 기획, 요구사항 정의(PRD)Redbackend-architect백엔드 설계, 서버·API 구현Bluefrontend-developer프런트엔드 UI/UX 구현Greenqa-engineer테스트, 품질 보증Yellowai-integration-specialistAI 모델 연동 전문가Purple팀에게 작업 지시 전에 5W1H 프레임워크로 요구사항을 먼저 정리한다.항목질문예시 (AI 공감 다이어리)Who누가 구현하나?백엔드·프런트·QA 에이전트What무엇을 만드나?일기 작성 → AI 감정 분석 → 공감 답변When언제 만드나?지금 바로Where어디서 사용하나?웹 브라우저Why왜 필요한가?감정 정리가 어려운 사람에게 위로How어떻게 구현하나?OpenRouter API + 감정 분석 AI5. MCP(Model Context Protocol)란?AI 모델이 외부 데이터, 도구, 서비스와 연결할 때 사용하는 표준화된 통신 규약.API vs MCP 비교구분APIMCP비유특정 가게 하나의 대화 창구여러 가게를 한꺼번에 관리하는 표준 규격연결 대상특정 서비스 1개다양한 데이터·도구를 통합 관리사용 주체개발자가 직접 코드 작성AI가 스스로 도구를 선택하여 활용로컬 MCP vs 원격 MCP구분로컬 MCP원격 MCP실행 위치내 컴퓨터 안인터넷상 외부 서버인터넷불필요필수인증불필요API 키, OAuth 등 필요속도빠름네트워크에 따라 다름설치 명령claude mcp add [이름] -- [실행 명령]claude mcp add --transport http [이름] [URL]
